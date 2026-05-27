@@ -1,9 +1,172 @@
-!DOCTYPE html
-<html>
-  <head>
-    <h1>  For You </h1>
-  </head>
-  <Body>
-    Click the box below for a surpirse.
-  </Body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For You</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #fdf8f3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Jost', sans-serif;
+      color: #3a2e28;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      letter-spacing: 0.12em;
+      color: #3a2e28;
+      margin-bottom: 0.4rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #b08070;
+      margin-bottom: 3.5rem;
+      text-align: center;
+    }
+
+    /* ── clickable box ── */
+    #trigger {
+      position: relative;
+      width: min(520px, 90vw);
+      aspect-ratio: 4 / 3;
+      border: 1px solid #d4b8a8;
+      border-radius: 4px;
+      cursor: pointer;
+      overflow: hidden;
+      background: #fff9f5;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+
+    #trigger:hover, #trigger:focus-visible {
+      border-color: #b08070;
+      box-shadow: 0 4px 24px rgba(176, 128, 112, 0.15);
+    }
+
+    /* hint label */
+    #hint {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 2;
+    }
+
+    #hint .icon {
+      font-size: 2rem;
+      line-height: 1;
+      opacity: 0.5;
+    }
+
+    #hint p {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #b08070;
+    }
+
+    /* lottie sits inside the box */
+    #lottie-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* state: playing — hide hint */
+    #trigger.playing #hint { opacity: 0; }
+
+    /* replay note */
+    #replay-note {
+      margin-top: 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #c9a898;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      text-align: center;
+    }
+
+    #replay-note.visible { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <h1>For You</h1>
+  <p class="subtitle">a little something</p>
+
+  <div
+    id="trigger"
+    role="button"
+    tabindex="0"
+    aria-label="Click to reveal a surprise"
+  >
+    <div id="hint">
+      <span class="icon">✦</span>
+      <p>click to open</p>
+    </div>
+    <div id="lottie-container"></div>
+  </div>
+
+  <p id="replay-note">click again to replay</p>
+
+  <!-- Lottie Web from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script>
+    const trigger     = document.getElementById('trigger');
+    const replayNote  = document.getElementById('replay-note');
+    let anim          = null;
+    let hasPlayed     = false;
+
+    // Load the animation (paused)
+    anim = lottie.loadAnimation({
+      container:     document.getElementById('lottie-container'),
+      renderer:      'svg',
+      loop:          false,
+      autoplay:      false,
+      path:          'Butterflies.json'
+    });
+
+    anim.addEventListener('complete', () => {
+      trigger.classList.remove('playing');
+      replayNote.classList.add('visible');
+    });
+
+    function play() {
+      trigger.classList.add('playing');
+      anim.goToAndPlay(0, true);
+      if (!hasPlayed) hasPlayed = true;
+    }
+
+    trigger.addEventListener('click', play);
+    trigger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        play();
+      }
+    });
+  </script>
+
+</body>
 </html>
